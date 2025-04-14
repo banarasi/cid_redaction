@@ -1,0 +1,65 @@
+Create a full-stack web application that allows users to upload a PDF, redacts sensitive information (person names and phone numbers) using a Python backend with LLM integration, and allows the user to download the redacted PDF.
+I. Overall Architecture:
+Frontend: A single-page web interface built with React and styled using Tailwind CSS.
+Backend: A Python web server using FastAPI to handle file uploads, process PDFs, and serve downloads.
+Interaction: The frontend communicates with the backend via RESTful API calls.
+II. Backend Requirements (Python/FastAPI):
+Setup:
+Use Flask framework.
+Include necessary libraries: Flask, PyMuPDF (fitz), os, json, werkzeug (for secure filenames), uuid (for unique filenames).
+Set up temporary directories for uploads and redacted outputs (ensure proper cleanup or management).
+Core Redaction Logic:
+Integrate the previously defined Python function redact_sensitive_info_llm(input_pdf_path, output_pdf_path).
+This function must include the conceptual LLM integration using placeholder functions:
+call_llm_for_entities(text_content): Simulates calling an LLM, takes text, includes comments explaining the need for a real prompt requesting exact text matches and structured JSON output ({"names": [...], "phones": [...]}), and returns a simulated JSON string response.
+parse_llm_response(response_text): Simulates parsing the JSON response, handling errors, and returning lists of names and phones.
+The redaction logic should use page.search_for() for coordinate mapping and page.add_redact_annot() with red fill color.
+Include the fix for deduplicating fitz.Rect objects using tuple(rect).
+Ensure comprehensive comments explaining the conceptual nature of the LLM part, the need for real API keys/calls, etc.
+API Endpoints:
+POST /api/upload:
+Accepts a PDF file upload (multipart/form-data).
+Saves the uploaded file securely to a temporary input directory (using werkzeug.utils.secure_filename and potentially unique IDs).
+Generates a unique temporary output path.
+Calls redact_sensitive_info_llm() with the temporary input and output paths.
+If successful, returns a JSON response containing a unique identifier or filename for the redacted file (e.g., {"redacted_filename": "unique_id.pdf"}).
+Handles errors during upload or redaction (e.g., invalid file type, processing errors) and returns appropriate error responses (e.g., status code 400 or 500 with an error message).
+GET /api/download/<filename>:
+Accepts the unique filename of a redacted PDF as part of the URL path.
+Locates the corresponding redacted PDF file in the temporary output directory.
+Uses Flask's send_from_directory or send_file to send the file back to the client as an attachment, prompting a download.
+Handles cases where the file is not found (e.g., return 404).
+Configuration: Include comments or instructions on setting up temporary folders and potential environment variables (e.g., for LLM API keys in a real implementation).
+III. Frontend Requirements (React/Tailwind CSS):
+Setup:
+A standard React project structure (e.g., created with Create React App or Vite).
+Tailwind CSS configured for styling.
+UI Components:
+File Uploader: A component (e.g., using <input type="file"> or a library like react-dropzone) allowing users to select or drag-and-drop a single PDF file. Style it clearly using Tailwind classes.
+Status Indicator: Display the application's status (e.g., "Ready", "Uploading...", "Processing PDF...", "Redaction Complete", "Error").
+Upload Button: A button to trigger the upload process after a file is selected. Disable when no file is selected or during processing.
+Download Button/Link: Appears only after successful processing. Clicking it should trigger a GET request to the backend's /api/download/<filename> endpoint to download the redacted file. Disable or hide otherwise.
+Error Display: A designated area to show error messages returned from the backend.
+Interaction Logic:
+Use fetch or axios to make API calls to the backend.
+On file selection, enable the upload button.
+On upload button click:
+Update status to "Uploading...".
+Send a POST request to /api/upload with the file data in FormData.
+Update status to "Processing PDF...".
+On successful response from backend:
+Store the received redacted_filename.
+Update status to "Redaction Complete".
+Show the download button, linking it to /api/download/<redacted_filename>.
+On error response from backend:
+Update status to "Error".
+Display the error message.
+Hide/disable the download button.
+Styling:
+Use Tailwind CSS utility classes extensively for a clean, modern, and responsive design.
+Ensure clear visual feedback for different states (idle, processing, success, error).
+Make the interface intuitive and user-friendly.
+IV. Deliverables:
+The prompt asks for the code structure and implementation details for both the React frontend (components, API call logic) and the FastAPI backend (app setup, API endpoints, integration of the redaction function).
+Include comments explaining the code, setup steps (like installing dependencies pip install Flask PyMuPDF, npm install), and how to run both the frontend and backend servers.
+Reiterate the conceptual nature of the LLM components within the backend code comments.
