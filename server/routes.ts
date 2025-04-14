@@ -73,7 +73,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       return res.json({
         redacted_filename: redactedFile.id,
-        stats: redactedFile.stats
+        stats: {
+          names: redactedFile.namesCount,
+          phones: redactedFile.phonesCount,
+          pages: redactedFile.pagesCount
+        }
       });
     } catch (error) {
       console.error("Upload error:", error);
